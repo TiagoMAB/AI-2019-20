@@ -19,7 +19,7 @@ class Graph:
 		size = len(model)
 		
 		for i in range(1, size):
-			self.nodes.append(Node(0, i, model[i], [], 0))
+			self.nodes.append(Node(0, i, model[i], [[[], [i]]], 0))
 
 	def bfs(self, goal, cost):
 		self.nodes[goal- 1].h = cost
@@ -70,7 +70,7 @@ class SearchProblem:
 
 		for el in curr.neighbours:
 			neighbour = self.graph.nodes[el[1] - 1]
-			node = Node(neighbour.h, neighbour.index, neighbour.neighbours, curr.state + [el], curr.depth + 1)
+			node = Node(neighbour.h, neighbour.index, neighbour.neighbours, curr.state + [[[el[0]],[el[1]]]], curr.depth + 1)
 			queue.append(node)
 			
 
@@ -85,7 +85,7 @@ class SearchProblem:
 				return queue[0].state
 			for el in queue[0].neighbours:
 				neighbour = self.graph.nodes[el[1] - 1]
-				node = Node(neighbour.h, neighbour.index, neighbour.neighbours, queue[0].state + [el], queue[0].depth + 1)
+				node = Node(neighbour.h, neighbour.index, neighbour.neighbours, queue[0].state + [[[el[0]],[el[1]]]], queue[0].depth + 1)
 				queue.append(node)
 	#			for i in range(0, size):
 	#				print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
@@ -112,5 +112,4 @@ class SearchProblem:
 
 
 		result = self.algorithm(init[0], limitdepth, [])
-#		print("this: " + str(result))
-		return []
+		return result
