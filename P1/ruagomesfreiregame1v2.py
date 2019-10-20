@@ -81,6 +81,8 @@ I = [30]
 nn = SP.search(I,limitexp = 2000)
 tend = time.process_time()
 print("%.1fms"%((tend-tinit)*1000))
+print(str(tend-tinit))
+
 if validatepath(nn,I,U):   
         print("path")
         print(nn)
