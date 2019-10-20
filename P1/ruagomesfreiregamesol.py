@@ -22,20 +22,20 @@ class Graph:
 			self.nodes.append(Node(0, i, model[i], [], 0))
 
 	def bfs(self, goal, cost):
-		self.nodes[goal- 1].h = cost;
+		self.nodes[goal- 1].h = cost
 
 		queue = [goal - 1] 				#maybe needs , after goal
 		while len(queue) > 0:
 			curr = queue[0]
-			print("Curr:" + str(curr))
-			self.nodes[curr].visited = True;
+	#		print("Curr:" + str(curr))
+			self.nodes[curr].visited = True
 
 			for el in self.nodes[curr].neighbours:
 				neighbour = el[1] - 1
 				if self.nodes[neighbour].visited == False:
 					queue.append(neighbour)
 					self.nodes[neighbour].h = self.nodes[curr].h + 1
-					self.nodes[neighbour].visited = True;
+					self.nodes[neighbour].visited = True
 
 			queue.remove(curr)
 
@@ -54,7 +54,7 @@ class SearchProblem:
 		self.limitexp = 0
 		self.graph = Graph(goal[0], model)
 		self.graph.bfs(goal[0], 0)
-		self.graph.printNode()
+		#self.graph.printNode()
 		pass
 
 	def algorithm(self, position, limitdepth, transport):
@@ -77,8 +77,8 @@ class SearchProblem:
 		queue.sort(key = lambda node: node.h)
 		size = len(queue)
 		
-		for i in range(0, size):
-			print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
+	#	for i in range(0, size):
+	#		print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
 
 		while len(queue) > 0:
 			if queue[0].h == 0:
@@ -87,15 +87,15 @@ class SearchProblem:
 				neighbour = self.graph.nodes[el[1] - 1]
 				node = Node(neighbour.h, neighbour.index, neighbour.neighbours, queue[0].state + [el], queue[0].depth + 1)
 				queue.append(node)
-				for i in range(0, size):
-					print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
+	#			for i in range(0, size):
+	#				print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
 			queue.sort(key = lambda node: node.h)
 			
 
 		size = len(queue)
 		
-		for i in range(0, size):
-			print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
+	#	for i in range(0, size):
+	#		print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
 
 
 		return []
@@ -106,11 +106,11 @@ class SearchProblem:
 		## to implement
 		##
 
-		if tickets == [math.inf, math.inf, math.inf]:
-			print(init)
-			print(tickets)
+#		if tickets == [math.inf, math.inf, math.inf]:
+#			print(init)
+#			print(tickets)
 
 
 		result = self.algorithm(init[0], limitdepth, [])
-		print("this: " + str(result))
+#		print("this: " + str(result))
 		return []

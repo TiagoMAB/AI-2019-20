@@ -6,12 +6,12 @@ from ruagomesfreiregamesol import SearchProblem
 
 with open("coords.pickle", "rb") as fp:   # Unpickling
     coords = pickle.load(fp)
-    print(coords)
+   # print(coords)
     
 with open("mapasgraph2.pickle", "rb") as fp:   #Unpickling
     AA = pickle.load(fp)
-    print(AA[0][60])
-    print(AA[1][60])
+  #  print(AA[0][60])
+   # print(AA[1][60])
 U = AA[1]
 
 def plotpath(P,coords):   
@@ -76,12 +76,11 @@ tinittotal = time.process_time()
 print("\n(2 val) Exercise 1 - One agent, No limits")
 print("Init [30] Goal [56]")
 SP = SearchProblem(goal = [56], model = U, auxheur=coords)
-tinit = time.process_time()
+tinit = time.perf_counter()
 I = [30]
 nn = SP.search(I,limitexp = 2000)
-tend = time.process_time()
+tend = time.perf_counter()
 print("%.1fms"%((tend-tinit)*1000))
-print(str(tend-tinit))
 
 if validatepath(nn,I,U):   
         print("path")
