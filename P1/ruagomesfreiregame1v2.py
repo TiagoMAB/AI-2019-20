@@ -10,8 +10,8 @@ with open("coords.pickle", "rb") as fp:   # Unpickling
     
 with open("mapasgraph2.pickle", "rb") as fp:   #Unpickling
     AA = pickle.load(fp)
-    print(AA[0][5])
-    print(AA[1][5])
+    print(AA[0][60])
+    print(AA[1][60])
 U = AA[1]
 
 def plotpath(P,coords):   
