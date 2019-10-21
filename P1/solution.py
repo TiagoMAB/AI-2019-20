@@ -40,6 +40,9 @@ class Graph:
 						self.nodes[neighbour].visited = True
 
 				queue.remove(curr)
+			for n in self.nodes:
+				n.visited = False
+
 
 	def printNode(self):
 		size = len(self.nodes)
@@ -56,7 +59,7 @@ class SearchProblem:
 		self.limitexp = 0
 		self.graph = Graph(model)
 		self.graph.bfs(goal)
-		#self.graph.printNode()
+		self.graph.printNode()
 
 	def algorithm(self, position, limitexp, limitdepth, transport):
 
