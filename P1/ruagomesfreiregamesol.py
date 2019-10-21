@@ -24,7 +24,7 @@ class Graph:
 	def bfs(self, goal, cost):
 		self.nodes[goal- 1].h = cost
 
-		queue = [goal - 1] 				#maybe needs , after goal
+		queue = [goal - 1]
 		while len(queue) > 0:
 			curr = queue[0]
 	#		print("Curr:" + str(curr))
@@ -44,7 +44,7 @@ class Graph:
 		
 		for i in range(0, size):
 			print("Index: " + str(i + 1) + " | h: " + str(self.nodes[i].h) + " | neighbours: " + str(self.nodes[i].neighbours))	
-  
+
 class SearchProblem:
 
 	def __init__(self, goal, model, auxheur = []):
@@ -55,7 +55,6 @@ class SearchProblem:
 		self.graph = Graph(goal[0], model)
 		self.graph.bfs(goal[0], 0)
 		#self.graph.printNode()
-		pass
 
 	def algorithm(self, position, limitdepth, transport):
 
@@ -63,8 +62,7 @@ class SearchProblem:
 #			return []
 #		if self.graph.nodes[position].h == 0:
 #			return 
-		result = []
-		queue = [] 
+		queue = []
 		curr = self.graph.nodes[position - 1]
 		self.limitexp -= 1
 
@@ -72,15 +70,14 @@ class SearchProblem:
 			neighbour = self.graph.nodes[el[1] - 1]
 			node = Node(neighbour.h, neighbour.index, neighbour.neighbours, curr.state + [[[el[0]],[el[1]]]], curr.depth + 1)
 			queue.append(node)
-			
-
+		
 		queue.sort(key = lambda node: node.h)
 		size = len(queue)
 		
 	#	for i in range(0, size):
 	#		print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
 
-		while len(queue) > 0:
+		while size > 0:
 			if queue[0].h == 0:
 				return queue[0].state
 			for el in queue[0].neighbours:
@@ -90,26 +87,13 @@ class SearchProblem:
 	#			for i in range(0, size):
 	#				print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
 			queue.sort(key = lambda node: node.h)
-			
-
-		size = len(queue)
 		
+	#	size = len(queue)
 	#	for i in range(0, size):
 	#		print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
 
-
 		return []
 
-
 	def search(self, init, limitexp = 2000, limitdepth = 10, tickets = [math.inf,math.inf,math.inf], anyorder = False):
-		##
-		## to implement
-		##
-
-#		if tickets == [math.inf, math.inf, math.inf]:
-#			print(init)
-#			print(tickets)
-
-
 		result = self.algorithm(init[0], limitdepth, [])
 		return result
