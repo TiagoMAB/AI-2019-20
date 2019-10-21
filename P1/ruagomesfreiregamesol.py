@@ -23,6 +23,7 @@ class Graph:
 			self.nodes.append(Node(0, i, model[i], [[[], [i]]], 0, [0, 0, 0]))
 
 	def bfs(self, goal, cost):
+		
 		self.nodes[goal- 1].h = cost
 
 		queue = [goal - 1]
@@ -68,29 +69,32 @@ class SearchProblem:
 		self.limitexp = limitexp - 1
 		#if transport != [math.inf,math.inf,math.inf]:
 		curr.tickets = [] + transport
-		print("Tickets: " + str(transport))
+		#print("Tickets: " + str(transport))
+		new = Node(curr.h, curr.index, curr.neighbours, curr.state, curr.depth, curr.tickets)
+		queue.append(new)
 
-		for el in curr.neighbours:
-			neighbour = self.graph.nodes[el[1] - 1]
-			node = Node(neighbour.h, neighbour.index, neighbour.neighbours, curr.state + [[[el[0]],[el[1]]]], curr.depth + 1, [] + curr.tickets)
-			node.tickets[el[0]] -= 1	
-			if node.tickets[0] >= 0 and node.tickets[1] >= 0 and node.tickets[2] >= 0:
-				queue.append(node)
-		
-		queue.sort(key = lambda node: node.h)
-		size = len(queue)
-		
-		print("Tickets: " + str(transport))
-		for i in range(0, size):
-			print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours) + " | tickets: " + str(queue[i].tickets))
+#		for el in curr.neighbours:
+#			neighbour = self.graph.nodes[el[1] - 1]
+#			node = Node(neighbour.h, neighbour.index, neighbour.neighbours, curr.state + [[[el[0]],[el[1]]]], curr.depth + 1, [] + curr.tickets)
+#			node.tickets[el[0]] -= 1	
+#			if node.tickets[0] >= 0 and node.tickets[1] >= 0 and node.tickets[2] >= 0:
+#				queue.append(node)
+#		
+#		queue.sort(key = lambda node: node.h)
 
+
+	#	print("Tickets: " + str(transport))
+	#	for i in range(0, size):
+		#	print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours) + " | tickets: " + str(queue[i].tickets))
+		size = 1
 		while size > 0:
-			print("Index: " + str(queue[0].index) + "Tickets: " + str(queue[0].tickets))
+			size -= 1
+			#print("Index: " + str(queue[0].index) + "Tickets: " + str(queue[0].tickets))
 			self.limitexp -= 1
 			if queue[0].h == 0:
 				return queue[0].state
 
-			if self.limitexp == 2000:
+			if self.limitexp >= 2000:
 				return []
 			
 			if queue[0].depth <= 10:
@@ -102,6 +106,7 @@ class SearchProblem:
 						return node.state
 					if node.tickets[0] >= 0 and node.tickets[1] >= 0 and node.tickets[2] >= 0:
 						queue.append(node)
+						size += 1
 				queue.pop(0)
 				queue.sort(key = lambda node: node.h)	
 	
