@@ -96,7 +96,7 @@ class SearchProblem:
 					queue.append(node)
 					size += 1
 			queue.pop(0)
-			queue.sort(key = lambda node: node.pathcost)
+			queue.sort(key = lambda node: node.f)
 	
 		#	size = len(queue)
 		#	for i in range(0, size):
