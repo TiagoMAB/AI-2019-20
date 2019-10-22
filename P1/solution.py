@@ -4,9 +4,11 @@ import time
 
 class Node:
 
-	def __init__(self, h, index, neighbours, state, depth, tickets):
+	def __init__(self, h, pathcost, index, neighbours, state, depth, tickets):
 		self.visited = False
 		self.h = h
+		self.pathcost = pathcost
+		self.f = sum(self.h) + self.pathcost
 		self.neighbours = neighbours
 		self.index = index
 		self.state = state
@@ -20,7 +22,7 @@ class Graph:
 		size = len(model)
 		
 		for i in range(1, size):
-			self.nodes.append(Node([], i, model[i], [[[], [i]]], 0, [0, 0, 0]))
+			self.nodes.append(Node([], 0, i, model[i], [[[], [i]]], 0, [0, 0, 0]))
 
 	def bfs(self, goal):
 		
@@ -65,11 +67,12 @@ class SearchProblem:
 
 		queue = []
 		self.limitexp = limitexp - 1
+		numAgents = len(position)
         
 		for p in position:
 			curr = self.graph.nodes[p - 1]
 			curr.tickets = transport
-			new = Node(curr.h, curr.index, curr.neighbours, curr.state, curr.depth, curr.tickets)
+			new = Node(curr.h, 0, curr.index, curr.neighbours, curr.state, curr.depth, curr.tickets)
 			queue.append(new)
 
 		size = 1
@@ -85,7 +88,7 @@ class SearchProblem:
 			
 			for el in queue[0].neighbours:
 				neighbour = self.graph.nodes[el[1] - 1]
-				node = Node(neighbour.h, neighbour.index, neighbour.neighbours, queue[0].state + [[[el[0]],[el[1]]]], queue[0].depth + 1, [] + queue[0].tickets)
+				node = Node(neighbour.h, queue[0].pathcost + numAgents, neighbour.index, neighbour.neighbours, queue[0].state + [[[el[0]],[el[1]]]], queue[0].depth + 1, [] + queue[0].tickets)
 				node.tickets[el[0]] -= 1
 				if node.tickets[0] >= 0 and node.tickets[1] >= 0 and node.tickets[2] >= 0 and node.h == 0:	#possible optimization, checking for solution while generating nodes, may encounter an error because we are checking limitexpansions at the beginning
 					return node.state
@@ -93,7 +96,7 @@ class SearchProblem:
 					queue.append(node)
 					size += 1
 			queue.pop(0)
-			queue.sort(key = lambda node: node.h)	
+			queue.sort(key = lambda node: node.pathcost)
 	
 		#	size = len(queue)
 		#	for i in range(0, size):
