@@ -135,7 +135,7 @@ if validatepath(nn,I,U):
 else:
         print("invalid path")
 
-"""        
+     
 print("\n(4 val) Exercise 4 - Three agents, Limits")
 print("Init [30,40,109] Goal [61,60,71]")
 SP = SearchProblem(goal = [63,61,70], model = U, auxheur=coords)
@@ -151,6 +151,7 @@ if validatepath(nn,I,U, tickets = [5,20,2]):
 else:
         print("invalid path")
 
+"""
 print("\n(4 val) Exercise 5 - Three agents, Limits, Any-Order")
 print("Init [30,40,109] Goal [61,60,71]")
 SP = SearchProblem(goal = [63,61,70], model = U, auxheur=coords)
