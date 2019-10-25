@@ -1,51 +1,95 @@
 import math
 import pickle
 import time
+import itertools
 
 class Node:
 
-	def __init__(self, h, index, neighbours, state, depth, tickets):
+	def __init__(self, h, index, neighbours):
 		self.visited = False
 		self.h = h
 		self.neighbours = neighbours
 		self.index = index
-		self.state = state
-		self.depth = depth
-		self.tickets = tickets
 
 class Graph:
 
-	def __init__(self, goal, model):
+	def __init__(self, model):
 		self.nodes = []
 		size = len(model)
 		
 		for i in range(1, size):
-			self.nodes.append(Node(0, i, model[i], [[[], [i]]], 0, [0, 0, 0]))
+			self.nodes.append(Node([], i, model[i]))
 
-	def bfs(self, goal, cost):
+	def bfs(self, goal):
 		
-		self.nodes[goal- 1].h = cost
+		for g in goal:
+			self.nodes[g- 1].h.append(0)
 
-		queue = [goal - 1]
-		while len(queue) > 0:
-			curr = queue[0]
-	#		print("Curr:" + str(curr))
-			self.nodes[curr].visited = True
+			queue = [g - 1]
+			while len(queue) > 0:
+				curr = queue[0]
+				self.nodes[curr].visited = True
 
-			for el in self.nodes[curr].neighbours:
-				neighbour = el[1] - 1
-				if self.nodes[neighbour].visited == False:
-					queue.append(neighbour)
-					self.nodes[neighbour].h = self.nodes[curr].h + 1
-					self.nodes[neighbour].visited = True
+				for el in self.nodes[curr].neighbours:
+					neighbour = el[1] - 1
+					if self.nodes[neighbour].visited == False:
+						queue.append(neighbour)
+						self.nodes[neighbour].h.append(self.nodes[curr].h[-1] + 1)
+						self.nodes[neighbour].visited = True
 
-			queue.remove(curr)
+				queue.remove(curr)
+			for n in self.nodes:
+				n.visited = False
 
 	def printNode(self):
 		size = len(self.nodes)
 		
 		for i in range(0, size):
 			print("Index: " + str(i + 1) + " | h: " + str(self.nodes[i].h) + " | neighbours: " + str(self.nodes[i].neighbours))	
+
+class State:
+
+	def __init__(self, nodes, solution, depth, tickets, anyorder):
+		self.nodes = nodes
+		self.solution = solution
+		self.depth = depth 
+		self.tickets = tickets
+		self.f = depth
+		self.h = 0
+		if anyorder:
+			self.h += self.getH()
+			pass
+		else:
+			for i in range(len(nodes)):
+				if self.nodes[i].h[i] > self.h:
+					self.h = self.nodes[i].h[i]
+		self.f += self.h
+
+	def getH(self):
+
+		lst = []
+		for n in self.nodes:
+			lst = lst + [n.h]
+		
+		indexes = []
+		length = len(lst)
+		for i in range(0, length):
+			indexes = indexes + [i]
+
+		perm = itertools.permutations(indexes)
+		
+		h = math.inf
+		for p in perm:
+			currH = 0
+			j = 0
+			for i in p:
+				if lst[j][i] > currH:
+					currH = lst[j][i]
+				j += 1
+			if currH < h:
+				h = currH
+
+		return h
 
 class SearchProblem:
 
@@ -54,69 +98,93 @@ class SearchProblem:
 		self.model =  model
 		self.auxheur = auxheur
 		self.limitexp = 0
-		self.graph = Graph(goal[0], model)
-		self.graph.bfs(goal[0], 0)
-		#self.graph.printNode()
+		self.graph = Graph(model)
+		self.graph.bfs(goal)
 
-	def algorithm(self, position, limitexp, limitdepth, transport):
+	def algorithm(self, position, limitexp, limitdepth, transport, anyorder):
 
-#		if limitdepth == 0 or self.limitexp == 0:
-#			return []
-#		if self.graph.nodes[position].h == 0:
-#			return 
 		queue = []
-		curr = self.graph.nodes[position - 1]
 		self.limitexp = limitexp - 1
-		#if transport != [math.inf,math.inf,math.inf]:
-		curr.tickets = [] + transport
-		#print("Tickets: " + str(transport))
-		new = Node(curr.h, curr.index, curr.neighbours, curr.state, curr.depth, curr.tickets)
-		queue.append(new)
 
-#		for el in curr.neighbours:
-#			neighbour = self.graph.nodes[el[1] - 1]
-#			node = Node(neighbour.h, neighbour.index, neighbour.neighbours, curr.state + [[[el[0]],[el[1]]]], curr.depth + 1, [] + curr.tickets)
-#			node.tickets[el[0]] -= 1	
-#			if node.tickets[0] >= 0 and node.tickets[1] >= 0 and node.tickets[2] >= 0:
-#				queue.append(node)
-#		
-#		queue.sort(key = lambda node: node.h)
+		ls = []
 
-
-	#	print("Tickets: " + str(transport))
-	#	for i in range(0, size):
-		#	print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours) + " | tickets: " + str(queue[i].tickets))
+		for p in position:
+			ls.append(self.graph.nodes[p - 1])
+		
+		state = State(ls, [[[], position]], 0, transport, anyorder)
+		queue.append(state)
 		size = 1
+		visitedindexes = []
 		while size > 0:
-			size -= 1
-			#print("Index: " + str(queue[0].index) + "Tickets: " + str(queue[0].tickets))
-			self.limitexp -= 1
-			if queue[0].h == 0:
-				return queue[0].state
-
-			if self.limitexp >= 2000:
+			counter = 0
+			iii = []
+			for c in queue[0].nodes:
+				iii.append(c)
+			visitedindexes.append([iii])
+			if self.limitexp < 0:
 				return []
-			
-			if queue[0].depth <= 10:
-				for el in queue[0].neighbours:
-					neighbour = self.graph.nodes[el[1] - 1]
-					node = Node(neighbour.h, neighbour.index, neighbour.neighbours, queue[0].state + [[[el[0]],[el[1]]]], queue[0].depth + 1, [] + queue[0].tickets)
-					node.tickets[el[0]] -= 1
-					if node.tickets[0] >= 0 and node.tickets[1] >= 0 and node.tickets[2] >= 0 and node.h == 0:
-						return node.state
-					if node.tickets[0] >= 0 and node.tickets[1] >= 0 and node.tickets[2] >= 0:
-						queue.append(node)
-						size += 1
-				queue.pop(0)
-				queue.sort(key = lambda node: node.h)	
+			self.limitexp -= 1
 	
-		#	size = len(queue)
-		#	for i in range(0, size):
-		#		print("Index1: " + str(queue[i].index) + " | h: " + str(queue[i].h) + " | neighbours: " + str(queue[i].neighbours))
-		#	print(" ---")
+			if queue[0].f == queue[0].depth:
+				print(self.limitexp)
+				return queue[0].solution
+				
+			neighbours = []
+			for n in queue[0].nodes:
+				neighbours.append(n.neighbours)
+				
+			toAdd = list(itertools.product(*neighbours))
+
+			for el in toAdd:
+				indexes = []
+				nodes = []
+				sol0 = []
+				sol1 = []
+				tickets = [] + queue[counter].tickets
+				result = True
+				i = 0
+				for n in el:
+					indexes.append(n[1] - 1)
+					nodes.append(self.graph.nodes[n[1] - 1])
+					if self.graph.nodes[n[1] - 1].h[i] != 0:
+						result = False
+					tickets[n[0]] -= 1
+					sol0.append(n[0])
+					sol1.append(n[1])
+					i += 1
+
+				valid = True
+				sumTickets = 0
+				for t in tickets:
+					sumTickets += t
+					if t < 0: 
+						valid = False
+				
+				if len(indexes) == len(set(indexes)) and valid and queue[counter].depth <= limitdepth:
+
+					newstate = State(nodes, [] + queue[counter].solution + [[sol0,sol1]], queue[counter].depth + 1, tickets, anyorder)
+
+					if result:
+						print(self.limitexp)
+						return newstate.solution
+
+					if sumTickets >= len(nodes):
+						queue = [newstate] + queue
+						size += 1
+						counter += 1
+
+			size -= 1	
+			queue.pop(counter)
+			queue.sort(key = lambda state: state.f )
+
+			length = len(queue)
+			while length > self.limitexp:
+				queue.pop(self.limitexp)
+				length -= 1
+				size -= 1	
+
 		return []
 
 	def search(self, init, limitexp = 2000, limitdepth = 10, tickets = [math.inf,math.inf,math.inf], anyorder = False):
-		
-		result = self.algorithm(init[0], limitexp, limitdepth, tickets)
-		return result
+
+		return self.algorithm(init, limitexp, limitdepth, tickets, anyorder)
