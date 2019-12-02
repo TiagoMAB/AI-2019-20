@@ -119,3 +119,5 @@ for correct,mark in zip(cor,[3,7,3,7]):
         if correct:
                 grade += mark
 print("Grade in these tests (the final will also include hidden tests) : ", grade)        
+for i in A.Q:
+        print(i)
