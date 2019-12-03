@@ -42,11 +42,12 @@ def runagent(A, T, R, I = 1, learningphase=True, nlearn = 1000, ntest = 100):
 
 # due to the randomness in the learning process, we will run everythin NREP times
 # the final grades is based on the average on all of them
-f = open("result.txt", "w")
+f = open("result1.txt", "w")
 
-for i in range(100):
-        for j in range(50):
-                print("Value: " + str(i))
+for i in range(40, 90):
+        print(str(i))
+        f.write("Value: " + str(i) + "\n")
+        for j in range(25):
 
                 NREP = 5
                 val = [0,0,0,0]
